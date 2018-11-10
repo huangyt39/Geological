@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/take_photo_item"
+        android:title="Take Photo"
+        android:icon="@drawable/ic_photo"
+        app:showAsAction="always"/>
+    <item
+        android:id="@+id/photo_album_item"
+        android:title="Select From Album"
+        android:icon="@drawable/ic_photo_album"
+        app:showAsAction="always"/>
+</menu>
