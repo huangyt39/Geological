@@ -9,37 +9,32 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:gravity="center">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Username : "/>
+            android:orientation="vertical"
+            android:layout_marginLeft="10dp">
             <EditText
                 android:layout_width="300dp"
+                android:hint="Username"
+                android:inputType="text"
                 android:layout_height="wrap_content"
                 android:id="@+id/username_edittext"/>
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Password : "/>
             <EditText
                 android:layout_width="300dp"
+                android:inputType="text"
+                android:hint="Password"
                 android:layout_height="wrap_content"
                 android:id="@+id/password_edittext"/>
         </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp">
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

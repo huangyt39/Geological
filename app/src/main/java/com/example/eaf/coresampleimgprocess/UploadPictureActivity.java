@@ -56,6 +56,28 @@ public class UploadPictureActivity extends AppCompatActivity{
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
+
+        //get the picture selected
+        Intent intent = getIntent();
+        imageUriString = intent.getStringExtra("imageUri");
+        Toast.makeText(getApplicationContext(),"get picture from: " + imageUriString,Toast.LENGTH_SHORT).show();
+        if(imageUriString!=null) {
+            Log.d(TAG, "onCreate: geeeeeeeeee image uri string not null");
+            imageUri = Uri.parse(imageUriString);
+            imageView = (ImageView) findViewById(R.id.upload_imageview);
+            imageView.setImageURI(imageUri);
+        }
+        String imagePath = intent.getStringExtra("imagePath");
+        Toast.makeText(getApplicationContext(),"get picture from: " + imagePath,Toast.LENGTH_SHORT).show();
+        if(imagePath!=null) {
+            imageView = (ImageView) findViewById(R.id.upload_imageview);
+            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+            imageView.setImageBitmap(bitmap);
+            imageUri = Uri.parse(MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, null,null));
+            imageUriString=imageUri.toString();
+        }
+        Toast.makeText(getApplicationContext(),"get URI: " + imageUri,Toast.LENGTH_SHORT).show();
         final FloatingActionButton uploadButton = (FloatingActionButton) findViewById(R.id.upload_button);
         uploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,27 +112,9 @@ public class UploadPictureActivity extends AppCompatActivity{
             }
         });
 
-        Intent intent = getIntent();
-        imageUriString = intent.getStringExtra("imageUri");
-        if(imageUriString!=null) {
-            Log.d(TAG, "onCreate: geeeeeeeeee image uri string not null");
-            imageUri = Uri.parse(imageUriString);
-            imageView = (ImageView) findViewById(R.id.upload_imageview);
-            try {
-                Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(imageUri));
-                imageView.setImageBitmap(bitmap);
-            } catch (FileNotFoundException e) {
-                Log.d(TAG, "onCreate: errrrrrrrrrrrrrrrr image uri string is null");
-                e.printStackTrace();
-            }
-        }
 
-        String imagePath = intent.getStringExtra("imagePath");
-        if(imagePath!=null) {
-            imageView = (ImageView) findViewById(R.id.upload_imageview);
-            Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-            imageView.setImageBitmap(bitmap);
-        }
+
+
     }
 
     private void uploadImage(String imagePath) {

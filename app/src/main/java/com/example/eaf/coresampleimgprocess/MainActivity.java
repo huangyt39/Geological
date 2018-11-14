@@ -64,7 +64,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
     private CircleImageView circleImageView;
     protected static boolean loginStatus = false;
     protected static String currentUsername = "";
-
     private TextView usernameTextView;
     private TextView usertypeTextView;
 
@@ -91,7 +90,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
             actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
         }
 
-         navigationView = (NavigationView) findViewById(R.id.nav_view);
+        navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setCheckedItem(R.id.nav_main_item);//设置默认选中的Item
         mainFragment = new MainFragment();
         imageDetailFragment = new ImageDetailFragment();
@@ -171,6 +170,12 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
                         return cookiesOfHttpClient;
                     }
                 }).build();
+        if(!loginStatus){
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivityForResult(intent, REGISTER_AND_LOGIN);
+            Toast.makeText(getApplicationContext(),"Please Login First.",Toast.LENGTH_SHORT).show();
+            loginStatus=true;
+        }
     }
 
     protected void replaceFragment(Fragment fragment) {
@@ -292,6 +297,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
     private void handleImageOnKitKat(Intent data) {
         String imagePath = null;
         Uri uri = data.getData();
+        Toast.makeText(getApplicationContext(),"load picture from: "+uri,Toast.LENGTH_SHORT ).show();
         if (DocumentsContract.isDocumentUri(this, uri)) {
             String docId = DocumentsContract.getDocumentId(uri);
             if("com.android.providers.media.documents".equals(uri.getAuthority())) {
