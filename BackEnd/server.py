@@ -6,6 +6,12 @@ from datetime import timedelta
 import config
 import time
 import ImageProcess
+import predict
+from werkzeug import secure_filename
+
+ALLOWED_EXTENSIONS=set(['dbf','prj','sbn','sbx','shp','shx','xml'])
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.',1)[1] in ALLOWED_EXTENSIONS
 
 app = Flask(__name__)
 
@@ -142,7 +148,6 @@ def handleImage():
         session["imagefilename"] = imagefilename
         return "image save successfully"
 
-
 @app.route("/getimagesnumber", methods=["GET"])
 def returnSplitedImageNumber():
     try:
@@ -166,6 +171,31 @@ def returnSplitedImage():
         config.IMAGE_AFTER_PROCESS_DIR, currentImageFileName)
     return send_file(currentImageFilePath, mimetype="image/jpeg")
 
+@app.route("/uploadfiles", methods=['POST'])
+def handleArcgisFiles():
+    if not ('isLogin' in session) or not session['isLogin']:
+        app.logger.debug("uploadfiles without login")
+        return "sorry, you haven't login"
+    files = request.files
+    if files is None:
+        return "no ArcgisFiles"
+    else:
+        # image.save(os.path.join(config.IMAGE_STORE_DIR, image.filename))
+        for k in range(len(files)):
+            file = files[k]
+            if file and allowed_file(file.filename):
+                filename=secure_filename(file.filename)
+                file.save(os.path.join(app.config['ARCGISDATA_DIR'], filename))
+        return "files save successfully"
+
+@app.route("/getpredictresult", methods=['GET'])
+def returnPredictImage():
+    predict.predict('范围', '场地类别')
+    predictImageIndex = request.args["predictresultindex"]
+    predictImageFileName = "result.jpg"
+    currentImageFilePath = os.path.join(
+        config.IMAGE_PREDICTED, predictImageFileName)
+    return send_file(currentImageFilePath, mimetype="image/jpeg")
 
 @app.route("/checkLogin")
 def checkLogin():
