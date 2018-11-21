@@ -134,9 +134,9 @@ def registerWithPost():
 
 @app.route("/uploadimage", methods=['POST'])
 def handleImage():
-    if not ('isLogin' in session) or not session['isLogin']:
-        app.logger.debug("uploadimage without login")
-        return "sorry, you haven't login"
+    #if not ('isLogin' in session) or not session['isLogin']:
+    #    app.logger.debug("uploadimage without login")
+    #    return "sorry, you haven't login"
     image = request.files['image']
     if image is None:
         return "no image"
@@ -173,19 +173,21 @@ def returnSplitedImage():
 
 @app.route("/uploadfiles", methods=['POST'])
 def handleArcgisFiles():
-    if not ('isLogin' in session) or not session['isLogin']:
-        app.logger.debug("uploadfiles without login")
-        return "sorry, you haven't login"
+    #if not ('isLogin' in session) or not session['isLogin']:
+    #    app.logger.debug("uploadfiles without login")
+    #    return "sorry, you haven't login"
     files = request.files
+    print (request.files)
     if files is None:
         return "no ArcgisFiles"
     else:
         # image.save(os.path.join(config.IMAGE_STORE_DIR, image.filename))
-        for k in range(len(files)):
-            file = files[k]
-            if file and allowed_file(file.filename):
-                filename=secure_filename(file.filename)
-                file.save(os.path.join(app.config['ARCGISDATA_DIR'], filename))
+        for key in files.keys():
+            file = files[key]
+            if file:
+                _, savepath = os.path.split(file.filename)
+                print(os.path.join(config.ARCGISDATA_DIR, savepath))
+                file.save(os.path.join(config.ARCGISDATA_DIR, savepath))
         return "files save successfully"
 
 @app.route("/getpredictresult", methods=['GET'])

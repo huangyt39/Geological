@@ -1,11 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.eaf.coresampleimgprocess">
+    package="com.example.eaf.coresampleimgprocess"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <uses-sdk tools:overrideLibrary="com.leon:lfilepickerlibrary:1.8.0"/>
     <application
+        tools:replace="icon,label,theme,allowBackup,roundIcon,supportsRtl"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -32,7 +35,8 @@
             android:name=".UploadPictureActivity"
             android:label="@string/title_activity_upload_picture"
             android:theme="@style/AppTheme" />
-        <activity android:name=".LoginActivity"></activity>
+        <activity android:name=".LoginActivity" />
+        <activity android:name=".terrainPredictionActivity"></activity>
     </application>
 
 </manifest>

@@ -8,6 +8,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import java.io.IOException;
 
@@ -21,12 +23,13 @@ public class LoginActivity extends AppCompatActivity {
 
     private String registerUrl = "http://10.0.2.2:5000/register";
     private String loginUrl = "http://10.0.2.2:5000/login";
-
+    Button gotoImageProcessing;
+    Button gotoTerrainPrediction;
     Button registerButton;
     Button loginButton;
     EditText usernameEditText;
     EditText passwordEditText;
-
+    LinearLayout loginFrame;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -34,7 +37,9 @@ public class LoginActivity extends AppCompatActivity {
 
         usernameEditText = (EditText) findViewById(R.id.username_edittext);
         passwordEditText = (EditText) findViewById(R.id.password_edittext);
-
+        gotoImageProcessing=findViewById(R.id.gotoImage);
+        gotoTerrainPrediction=findViewById(R.id.gotoTP);
+        loginFrame=findViewById(R.id.mainFrame_login);
         registerButton = (Button) findViewById(R.id.register_button);
         registerButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -51,19 +56,37 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View view) {
                 String username = usernameEditText.getText().toString();
                 String password = passwordEditText.getText().toString();
-                MainActivity.currentUsername = username;
                 new LoginNetworkTask().execute(username, password);
                 Log.d(TAG, "onClick: login task begin " + username + " " + password);
             }
         });
+
+        gotoImageProcessing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(),"Image Processing.",Toast.LENGTH_SHORT).show();
+                Intent intent=new Intent(LoginActivity.this,MainActivity.class);
+                startActivity(intent);
+            }
+        });
+        gotoTerrainPrediction.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(),"Terrain Prediction.",Toast.LENGTH_SHORT).show();
+                Intent intent=new Intent(LoginActivity.this,terrainPredictionActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
-    private void closeActivity(String actionResult) {
+    private void finishLogin(String actionResult) {
         if(actionResult=="success") {
-            Intent intent = new Intent();
-            intent.putExtra("result", "success");
-            LoginActivity.this.setResult(RESULT_OK, intent);
-            LoginActivity.this.finish();
+            MainActivity.currentUsername = usernameEditText.getText().toString();
+            MainActivity.usernameTextView.setText(MainActivity.currentUsername);
+            gotoTerrainPrediction.setVisibility(View.VISIBLE);
+            gotoImageProcessing.setVisibility(View.VISIBLE);
+            loginFrame.setVisibility(View.GONE);
+            MainActivity.loginStatus=true;
         }
     }
 
@@ -83,7 +106,9 @@ public class LoginActivity extends AppCompatActivity {
             super.onPostExecute(s);
             if (!s.equals("error")) {
                 Log.d(TAG, "onPostExecute: Login task success");
-                closeActivity("success");
+                Toast.makeText(getApplicationContext(),"Login successfully.",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(),"Please choose what you want to do next.",Toast.LENGTH_SHORT).show();
+                finishLogin("success");
             }
         }
     }
@@ -104,7 +129,7 @@ public class LoginActivity extends AppCompatActivity {
             super.onPostExecute(s);
             if (!s.equals("error")) {
                 Log.d(TAG, "onPostExecute: Register task success");
-                closeActivity("success");
+                Toast.makeText(getApplicationContext(),"Register successfully.",Toast.LENGTH_SHORT).show();
             }
         }
     }

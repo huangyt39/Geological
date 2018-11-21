@@ -240,6 +240,7 @@ public class UploadPictureActivity extends AppCompatActivity{
 //                .url("http://www.baidu.com" + "/uploadimage")
 //                .post(requestBody)
 //                .build();
+
         RequestBody filebody = RequestBody.create(MediaType.parse("image/jpeg"), imageTempUploadfile);
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)

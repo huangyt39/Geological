@@ -34,6 +34,7 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -62,10 +63,9 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
     private static final int REGISTER_AND_LOGIN = 4;
 
     private CircleImageView circleImageView;
-    protected static boolean loginStatus = false;
+    public static boolean loginStatus = false;
     protected static String currentUsername = "";
-    private TextView usernameTextView;
-    private TextView usertypeTextView;
+    public static TextView usernameTextView;
 
     protected static OkHttpClient okHttpClientWithCookie;
     protected List<Cookie> cookiesOfHttpClient = new ArrayList<>();
@@ -112,7 +112,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
                     case R.id.logout:
                         loginStatus = false;
                         usernameTextView.setText("anoynomus");
-                        usertypeTextView.setText("none");
                         Toast.makeText(MainActivity.this, "logout successfully", Toast.LENGTH_SHORT).show();
                         break;
                     case R.id.nav_image_detail:
@@ -150,7 +149,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
             }
         });
         usernameTextView = headerLayout.findViewById(R.id.username);
-        usertypeTextView = headerLayout.findViewById(R.id.usertype);
 
         okHttpClientWithCookie = new OkHttpClient.Builder()
                 .connectTimeout(60, TimeUnit.SECONDS)
@@ -174,11 +172,10 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivityForResult(intent, REGISTER_AND_LOGIN);
             Toast.makeText(getApplicationContext(),"Please Login First.",Toast.LENGTH_SHORT).show();
-            loginStatus=true;
         }
     }
 
-    protected void replaceFragment(Fragment fragment) {
+    public void replaceFragment(Fragment fragment) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.fragment_frame_layout, fragment);
@@ -193,6 +190,12 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
 //        navigationView.callOnClick();
 //        MenuItem menuItem = findViewById(R.id.nav_image_detail);
 //        menuItem.setChecked(true);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        usernameTextView.setText(currentUsername);
     }
 
     @Override
@@ -281,7 +284,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
                 if(resultCode==RESULT_OK) {
                     loginStatus = true;
                     usernameTextView.setText(currentUsername);
-                    usertypeTextView.setText(currentUsername);
                     Toast.makeText(this, "Register or login done", Toast.LENGTH_SHORT);
                 } else {
                     loginStatus = false;
