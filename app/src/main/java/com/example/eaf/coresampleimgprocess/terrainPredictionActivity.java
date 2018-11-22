@@ -52,10 +52,6 @@ import android.widget.Toast;
 import com.leon.lfilepickerlibrary.LFilePicker;
 import com.leon.lfilepickerlibrary.utils.StringUtils;
 
-import org.jsoup.Connection;
-import org.jsoup.Jsoup;
-import org.jsoup.helper.StringUtil;
-
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -127,7 +123,7 @@ public class terrainPredictionActivity extends AppCompatActivity implements Main
         }
         drawerLayoutForTP=findViewById(R.id.drawer_layout_forTP);
         navigationView = findViewById(R.id.nav_view);
-
+        mainFragment=new MainFragment();
         hint= findViewById(R.id.hint);
 
         //选择完file之后呈现出来
@@ -226,7 +222,33 @@ public class terrainPredictionActivity extends AppCompatActivity implements Main
 //                    uploadImage(imagePath);
 //                    Log.d(TAG, "onClick: tttttttttttt " + imageUriString);
 //                    Log.d(TAG, "onClick: ttttttttt2 " + UriToPathOnKitKat(imageUri));
-                    uploadFile(file_List.get(0));
+                    //传输TP所需文件
+                    if(file_List.size()==13){
+                        for(int j=0;j<file_List.size();j++){
+                            File file=new File(file_List.get(j));
+                            file.getName();
+                            String []temp=null;
+                            Uri imageUri=null;
+                            if (Build.VERSION.SDK_INT>=24) {
+                                if(file==null) Log.d(TAG, "onOptionsItemSelected: position z");
+                                imageUri = FileProvider.getUriForFile(terrainPredictionActivity.this, "com.example.eaf.coresampleimgprocess", file);
+                            } else {
+                                imageUri = Uri.fromFile(file);
+                            }
+                            temp=imageUri.toString().split("/");
+                            String UriString="";
+                            UriString+=temp[0]+"/";
+                            for(int i=1;i<temp.length-1;i++){
+                                UriString+=temp[i]+"/";
+                            }
+                            UriString+=file.getName();
+                            uploadFile(UriString);
+                        }
+                        mainFragment.loadTPResultFromServer();
+                    }
+                    else{
+                        Toast.makeText(getApplicationContext(),"Please provide enough files to do terrain prediction.",Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
         });
@@ -272,12 +294,13 @@ public class terrainPredictionActivity extends AppCompatActivity implements Main
         switch (item.getItemId()) {
             case R.id.select_filesForTP:
                 Toast.makeText(getApplicationContext(),"Select Files to upload for TP.",Toast.LENGTH_SHORT).show();
+                //可看到的文件大小限制：10M
                 new LFilePicker()
                         .withActivity(terrainPredictionActivity.this)
                         .withRequestCode(CHOOSE_FILE_CODE)
                         .withStartPath("/storage/emulated/0")
                         .withIsGreater(false)
-                        .withFileSize(500 * 1024)
+                        .withFileSize(10000 * 1024)
                         .withTitle("Files")
                         .start();
             default:
@@ -337,37 +360,6 @@ public class terrainPredictionActivity extends AppCompatActivity implements Main
         }
     }
 
-    public static Response doPostFileRequest(String url, Map paramMap, File file, String fileRequestParam) throws Exception {
-        if (StringUtil.isBlank(url)) {
-            throw new Exception("The request URL is blank.");
-        }
-        Connection connection = Jsoup.connect(url);
-        connection.method(Connection.Method.POST);
-        connection.timeout(12000);
-        connection.header("Content-Type","multipart/form-data");
-        connection.ignoreHttpErrors(true);
-        connection.ignoreContentType(true);
-        if (paramMap != null && !paramMap.isEmpty()) {
-            connection.data(paramMap);
-        }
-        try {
-            FileInputStream fis = new FileInputStream(file);
-            connection.data(fileRequestParam, file.getName(), fis);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        try {
-            Response response = connection.execute();
-            if (response.statusCode() != HttpStatus.SC_OK) {
-                throw new Exception("http请求响应码:"+ response.statusCode() +"");
-            }
-            return response;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     private String doPost(String filePath) {
 
         File tempUploadfile = new File(getExternalCacheDir(), "temp.jpg");
@@ -416,7 +408,7 @@ public class terrainPredictionActivity extends AppCompatActivity implements Main
 //                .url("http://www.baidu.com" + "/uploadimage")
 //                .post(requestBody)
 //                .build();
-        RequestBody filebody = RequestBody.create(MediaType.parse("application/xml"), tempUploadfile);
+        RequestBody filebody = RequestBody.create(MediaType.parse("application/octet-stream; charset=utf-8"), tempUploadfile);
         RequestBody requestBody = new MultipartBody.Builder()
                 .setType(MultipartBody.FORM)
                 .addFormDataPart("image", filePath, filebody)
@@ -450,7 +442,6 @@ public class terrainPredictionActivity extends AppCompatActivity implements Main
 
     public void onFragmentInteraction(Uri uri) {
     }
-
 
 
 }

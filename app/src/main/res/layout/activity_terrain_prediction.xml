@@ -40,6 +40,12 @@
             android:id="@+id/hint"
             android:text="You haven`t select files that you want to upload."
             android:textSize="20sp"/>
+        <ImageView
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:id="@+id/TPResult"
+            android:layout_gravity="center"
+            android:visibility="gone"/>
         <ListView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

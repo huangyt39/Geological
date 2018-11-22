@@ -31,5 +31,4 @@ dependencies {
     implementation 'com.android.support:design:26.1.0'
     implementation 'de.hdodenhof:circleimageview:2.1.0'
     implementation 'com.squareup.okhttp3:okhttp:3.7.0'
-    implementation 'org.jsoup:jsoup:1.11.3'
 }

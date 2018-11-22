@@ -100,6 +100,7 @@ public class UploadPictureActivity extends AppCompatActivity{
 //                    Log.d(TAG, "onClick: tttttttttttt " + imageUriString);
 //                    Log.d(TAG, "onClick: ttttttttt2 " + UriToPathOnKitKat(imageUri));
                     uploadImage(imageUriString);
+                    Toast.makeText(UploadPictureActivity.this,imageUriString, Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -121,11 +122,7 @@ public class UploadPictureActivity extends AppCompatActivity{
         new NetworkTask().execute(imagePath);
     }
 
-    private void testServer() {
-        Log.d(TAG, "testServer: begin");
-        new TestServerNetworkTask().execute(BASE_URL);
-        Log.d(TAG, "testServer: end");
-    }
+
     private String doGet(String url) {
         Log.d(TAG, "doGet: begin");
         Request.Builder reqBuilder = new Request.Builder();
@@ -269,58 +266,7 @@ public class UploadPictureActivity extends AppCompatActivity{
     }
 
 
-    @TargetApi(19)
-    private String UriToPathOnKitKat(Uri uri) {
-        Log.d(TAG, "UriToPathOnKitKat: before");
-        String imagePath = "";
-        if(DocumentsContract.isDocumentUri(this, uri)) {
-            Log.d(TAG, "UriToPathOnKitKat: case 1");
-            String docId = DocumentsContract.getDocumentId(uri);
-            if("com.android.providers.media.documents".equals(uri.getAuthority())) {
-                String id = docId.split(":")[1];
-                String selection = MediaStore.Images.Media._ID + "=" + id;
-                imagePath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection);
-            } else if ("com.android.providers.downloads.documents".equals(uri.getAuthority())) {
-                Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(docId));
-                imagePath = getImagePath(contentUri, null);
-            }
-            Log.d(TAG, "UriToPathOnKitKat: case 1");
-        } else if ("content".equalsIgnoreCase(uri.getScheme())) {
-            Log.d(TAG, "UriToPathOnKitKat: case 2");
-            imagePath = getImagePath(uri, null);
-            Log.d(TAG, "UriToPathOnKitKat: case 2");
-        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
-            Log.d(TAG, "UriToPathOnKitKat: case 3");
-            imagePath = uri.getPath();
-            Log.d(TAG, "UriToPathOnKitKat: case 3");
-        }
-        Log.d(TAG, "UriToPathOnKitKat: end");
-        return imagePath;
-    }
 
 
-    private String UriToPathBeforeKitKat(Uri uri) {
-        String imagePath = getImagePath(uri, null);
-        return imagePath;
-    }
-
-
-    private String getImagePath(Uri uri, String selection) {
-        Log.d(TAG, "getImagePath: begin ");
-        String path = null;
-        Cursor cursor = getContentResolver().query(uri, null, selection, null, null);
-        Log.d(TAG, "getImagePath: point 1");
-        if(cursor!=null) {
-            Log.d(TAG, "getImagePath: point 2");
-            if(cursor.moveToFirst()) {
-                path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.ImageColumns.DATA));
-                Log.d(TAG, "getImagePath: point 3");
-            }
-            cursor.close();
-            Log.d(TAG, "getImagePath: point 4");
-        }
-        Log.d(TAG, "getImagePath: end");
-        return path;
-    }
 
 }

@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
     protected static OkHttpClient okHttpClientWithCookie;
     protected List<Cookie> cookiesOfHttpClient = new ArrayList<>();
 
-    private MainFragment mainFragment = null;
+    public static MainFragment mainFragment = null;
     private ImageDetailFragment imageDetailFragment = null;
 
     private NavigationView navigationView;

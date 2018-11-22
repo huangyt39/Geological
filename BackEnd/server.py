@@ -137,7 +137,9 @@ def handleImage():
     #if not ('isLogin' in session) or not session['isLogin']:
     #    app.logger.debug("uploadimage without login")
     #    return "sorry, you haven't login"
+
     image = request.files['image']
+    print(image)
     if image is None:
         return "no image"
     else:
@@ -173,9 +175,9 @@ def returnSplitedImage():
 
 @app.route("/uploadfiles", methods=['POST'])
 def handleArcgisFiles():
-    #if not ('isLogin' in session) or not session['isLogin']:
-    #    app.logger.debug("uploadfiles without login")
-    #    return "sorry, you haven't login"
+    if not ('isLogin' in session) or not session['isLogin']:
+        app.logger.debug("uploadfiles without login")
+        return "sorry, you haven't login"
     files = request.files
     print (request.files)
     if files is None:

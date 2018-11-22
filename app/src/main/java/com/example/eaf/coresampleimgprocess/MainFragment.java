@@ -16,7 +16,9 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
@@ -47,10 +49,13 @@ public class MainFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     private static final String GET_IMAGE_URL = "http://10.0.2.2:5000/getimage?imageindex=";
-
+    private static final String GET_TPResult_URL = "http://10.0.2.2:5000/getpredictresult?predictresultindex=";
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    private ImageView TPResult;
+    private TextView hint;
 
     private OnFragmentInteractionListener mListener;
 
@@ -95,6 +100,10 @@ public class MainFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         recyclerView = (RecyclerView) getView().findViewById(R.id.recycle_view_main_fragment);
+
+        TPResult=getView().findViewById(R.id.TPResult);
+        hint=getView().findViewById(R.id.hint);
+
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(manager);
         ImageAdapter imageAdapter = new ImageAdapter(bitmapList, (MainActivity)getActivity());
@@ -192,7 +201,10 @@ public class MainFragment extends Fragment {
     }
 
 
-    class GetSplitImageTask extends AsyncTask<String, Integer, String> {
+
+
+    class GetTPResultTask extends AsyncTask<String, Integer, String> {
+        Bitmap currentImage;
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -201,7 +213,7 @@ public class MainFragment extends Fragment {
         @Override
         protected String doInBackground(String... strings) {
 //            return null;
-            Bitmap currentImage = getImage(strings[0]);
+            currentImage= getTPResult(String.valueOf(0));
             if (currentImage != null) {
                 bitmapList.add(new SubImage(currentImage));
                 Log.d(TAG, "doInBackground: add to bitmapList success");
@@ -210,17 +222,37 @@ public class MainFragment extends Fragment {
                 return "error";
             }
         }
-
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             Log.d(TAG, "onPostExecute: notify change");
             Log.d(TAG, "onPostExecute: ");
             Log.d(TAG, "onPostExecute: the size of bitmap " + String.valueOf(bitmapList.size()));
-            recyclerView.getAdapter().notifyDataSetChanged();
+            /*hint.setText("Result for Terrain Prediction:");
+            TPResult.setImageBitmap(currentImage);
+            TPResult.setVisibility(View.VISIBLE);*/
         }
     }
 
+    private Bitmap getTPResult(String imageIndex) {
+        Log.d(TAG, "getImage: getting " + imageIndex);
+        String imageUrl = GET_TPResult_URL + imageIndex;
+        Request.Builder builder = new Request.Builder();
+        Request request = builder.url(imageUrl).get().build();
+        try {
+            Response response = MainActivity.okHttpClientWithCookie.newCall(request).execute();
+            InputStream inputStream = response.body().byteStream();
+            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+            Log.d(TAG, "getImage: getting " + imageIndex + " done");
+            return bitmap;
+        } catch (IOException e) {
+            Log.d(TAG, "getImage: error in getImage");
+            e.printStackTrace();
+            Log.d(TAG, "getImage: error end");
+            return null;
+        }
+
+    }
     private Bitmap getImage(String imageIndex) {
         Log.d(TAG, "getImage: getting " + imageIndex);
         String imageUrl = GET_IMAGE_URL + imageIndex;
@@ -261,6 +293,11 @@ public class MainFragment extends Fragment {
     public void loadPictureFromServer() {
         new GetAllSplitImagesTask().execute();
     }
+
+    public void loadTPResultFromServer(){
+        new GetTPResultTask().execute();
+    }
+
 
     public void testFunction() {
 //        Toast.makeText(getActivity(), "on upload photTo result", Toast.LENGTH_SHORT).show();
