@@ -13,8 +13,8 @@ from sklearn.metrics import accuracy_score
 from sklearn.svm import SVC
 
 def predict(filenameArea, filenameData):
-    sfArea = shapefile.Reader('../predictData' + filenameArea)
-    sfPoint = shapefile.Reader('../predictData' + filenameData)
+    sfArea = shapefile.Reader('./predictdata/' + filenameArea)
+    sfPoint = shapefile.Reader('./predictdata/' + filenameData)
 
     #read index of points
     features = sfPoint.shapeRecords()[:]
