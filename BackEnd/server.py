@@ -143,10 +143,10 @@ def handleImage():
     if image is None:
         return "no image"
     else:
-        # image.save(os.path.join(config.IMAGE_STORE_DIR, image.filename))
         imagefilename = str(time.time()) + ".jpg"
         image.save(os.path.join(config.IMAGE_STORE_DIR,
                                 imagefilename))
+        image.save(os.path.join(config.IMAGE_STORE_DIR, image.filename))
         session["imagefilename"] = imagefilename
         return "image save successfully"
 
