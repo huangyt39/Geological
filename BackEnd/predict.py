@@ -28,10 +28,10 @@ def predict(filenameArea, filenameData):
     recds = sfPoint.records()
     dic, count = {}, 0
     for i in recds:
-        if i[3] not in dic.values():
-            dic[count] = i[3]
+        if i[0] not in dic.values():
+            dic[count] = i[0]
             count += 1
-    labels = np.array(recds[:], dtype=np.string_)[:, 3]
+    labels = np.array(recds[:], dtype=np.string_)[:, 0]
     for i in range(count):
         labels[labels == dic[i]] = i
     labels = labels.astype(np.float)
@@ -64,7 +64,7 @@ def predict(filenameArea, filenameData):
     # scatter
     labels = np.array(labels)
     for i in range(count):
-        l = plt.scatter(index[labels == i, 0], index[labels == i, 1], s=1,c=cmap(i), label = dic[i].decode('gbk'))
+        l = plt.scatter(index[labels == i, 0], index[labels == i, 1], s=1,c=cmap(i), label = dic[i])
 
     #translate the area to a path and clip
     shape_rec = sfArea.shapeRecords()[-1]
@@ -94,7 +94,7 @@ def predict(filenameArea, filenameData):
     #save result and show figure
     figure_fig = plt.gcf()  # 'get current figure'
     # figure_fig.savefig('./result/result.eps', format='eps', dpi=1000)
-    figure_fig.savefig('../predictImg/result.jpg', format='jpg', dpi=1000)
+    figure_fig.savefig('./predictimg/result.jpg', format='jpg', dpi=1000)
     # plt.show()
 
     fig = plt.figure()
@@ -109,7 +109,7 @@ def predict(filenameArea, filenameData):
     # scatter
     labels = np.array(labels)
     for i in range(count):
-        l = plt.scatter(index[labels == i, 0], index[labels == i, 1], s=1,c=cmap(i), label = dic[i].decode('gbk'))
+        l = plt.scatter(index[labels == i, 0], index[labels == i, 1], s=1,c=cmap(i), label = dic[i])
         
     #set the limit of x y
     plt.xlim(xx.min(), xx.max())

@@ -2,8 +2,10 @@ import numpy as np
 import cv2
 import matplotlib.pyplot as plt
 import pdb
+import config
+import os
 
-def cutImg(img_path):
+def cutImg(img_path, img_name):
     # img_path = './samplepic/sample1.jpg' # 图片路径
     img = cv2.imread(img_path)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -48,6 +50,9 @@ def cutImg(img_path):
         lightSet = np.append(lightSet, m-1)
 
     for index in range(len(lightSet) - 1):
-        cv2.imwrite("./pic/boxes/box"+str(index)+".png", img[int(lightSet[index]):int(lightSet[index+1])])
+        tempimagename = os.path.join(
+                config.IMAGE_AFTER_PROCESS_DIR, img_name[:img_name.find('.jpg')] + str(index) + '.jpg')
+        cv2.imwrite(tempimagename, img[int(lightSet[index]):int(lightSet[index+1])])
     
     return len(lightSet) - 1
+    

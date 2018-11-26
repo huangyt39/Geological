@@ -2,10 +2,14 @@ import numpy as np
 import cv2
 import pdb
 import matplotlib.pyplot as plt
+import config
+import os
 
-def fillCracks(picindex):
+def fillCracks(picindex, img_name):
     #读取图片转灰度图 高斯模糊
-    img = cv2.imread('./pic/boxes/box'+ str(picindex) +'.png')
+    tempimagename = os.path.join(
+                config.IMAGE_AFTER_PROCESS_DIR, img_name[:img_name.find('.jpg')] + str(picindex) + '.jpg')
+    img = cv2.imread(tempimagename)
     gray = cv2.cvtColor(img,cv2.COLOR_BGR2GRAY)
     gray = cv2.GaussianBlur(gray, (3, 3), 0)
     m,n = gray.shape
@@ -46,4 +50,8 @@ def fillCracks(picindex):
             newImg = np.append(newImg, img[:, imgIndex*pixelNumPerSet:(imgIndex+1)*pixelNumPerSet], axis=1)
 
     #保存新图像
-    cv2.imwrite('./pic/result/box'+ str(picindex) +'result.png', newImg)
+    tempimagename = os.path.join(
+                config.IMAGE_AFTER_PROCESS_DIR, img_name[:img_name.find('.jpg')] + str(picindex) + '.jpg')
+    cv2.imwrite(tempimagename, newImg)
+
+    return tempimagename

@@ -8,6 +8,7 @@ import time
 import ImageProcess
 import predict
 from werkzeug import secure_filename
+import imgProcess
 
 ALLOWED_EXTENSIONS=set(['dbf','prj','sbn','sbx','shp','shx','xml'])
 def allowed_file(filename):
@@ -137,15 +138,16 @@ def handleImage():
     #if not ('isLogin' in session) or not session['isLogin']:
     #    app.logger.debug("uploadimage without login")
     #    return "sorry, you haven't login"
-
+    username = request.form['username']
     image = request.files['image']
     print(image)
     if image is None:
         return "no image"
     else:
         imagefilename = str(time.time()) + ".jpg"
-        image.save(os.path.join(config.IMAGE_STORE_DIR,
-                                imagefilename))
+        userpath = os.path.join(
+                config.IMAGE_STORE_DIR, username)
+        image.save(os.path.join(userpath, imagefilename))
         image.save(os.path.join(config.IMAGE_STORE_DIR, image.filename))
         session["imagefilename"] = imagefilename
         return "image save successfully"
@@ -159,7 +161,7 @@ def returnSplitedImageNumber():
     print(imagefilename)
     imagefilepath = os.path.join(config.IMAGE_STORE_DIR, imagefilename)
     print(imagefilepath)
-    splitImagesNames = ImageProcess.imageProcess(imagefilepath, imagefilename)
+    splitImagesNames = imgProcess.imgProcess(imagefilepath, imagefilename)
     print(splitImagesNames)
     return str(len(splitImagesNames))
 
@@ -194,8 +196,7 @@ def handleArcgisFiles():
 
 @app.route("/getpredictresult", methods=['GET'])
 def returnPredictImage():
-    predict.predict('范围', '场地类别')
-    predictImageIndex = request.args["predictresultindex"]
+    predict.predict('范围', '类别')
     predictImageFileName = "result.jpg"
     currentImageFilePath = os.path.join(
         config.IMAGE_PREDICTED, predictImageFileName)
