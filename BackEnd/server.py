@@ -197,7 +197,7 @@ def handleArcgisFiles():
 def returnPredictImage():
     predict.predict('范围', '类别')
     predictresultindex = request.args["predictresultindex"]
-    predictImageFileName = {0:'data.png', 1:'result.png'}
+    predictImageFileName = {0:'data.png', 1:'result.png','0':'data.png', '1':'result.png'}
     currentImageFilePath = os.path.join(
         config.IMAGE_PREDICTED, predictImageFileName[predictresultindex])
     return send_file(currentImageFilePath, mimetype="image/jpeg")
