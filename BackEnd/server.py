@@ -5,7 +5,6 @@ import os
 from datetime import timedelta
 import config
 import time
-import ImageProcess
 import predict
 from werkzeug import secure_filename
 import imgProcess
