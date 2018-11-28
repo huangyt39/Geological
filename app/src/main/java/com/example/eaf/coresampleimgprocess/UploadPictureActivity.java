@@ -61,7 +61,6 @@ public class UploadPictureActivity extends AppCompatActivity{
         //get the picture selected
         Intent intent = getIntent();
         imageUriString = intent.getStringExtra("imageUri");
-        Toast.makeText(getApplicationContext(),"get picture from: " + imageUriString,Toast.LENGTH_SHORT).show();
         if(imageUriString!=null) {
             Log.d(TAG, "onCreate: geeeeeeeeee image uri string not null");
             imageUri = Uri.parse(imageUriString);
@@ -69,7 +68,6 @@ public class UploadPictureActivity extends AppCompatActivity{
             imageView.setImageURI(imageUri);
         }
         String imagePath = intent.getStringExtra("imagePath");
-        Toast.makeText(getApplicationContext(),"get picture from: " + imagePath,Toast.LENGTH_SHORT).show();
         if(imagePath!=null) {
             imageView = (ImageView) findViewById(R.id.upload_imageview);
             Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
@@ -77,7 +75,6 @@ public class UploadPictureActivity extends AppCompatActivity{
             imageUri = Uri.parse(MediaStore.Images.Media.insertImage(getContentResolver(), bitmap, null,null));
             imageUriString=imageUri.toString();
         }
-        Toast.makeText(getApplicationContext(),"get URI: " + imageUri,Toast.LENGTH_SHORT).show();
         final FloatingActionButton uploadButton = (FloatingActionButton) findViewById(R.id.upload_button);
         uploadButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,7 +97,6 @@ public class UploadPictureActivity extends AppCompatActivity{
 //                    Log.d(TAG, "onClick: tttttttttttt " + imageUriString);
 //                    Log.d(TAG, "onClick: ttttttttt2 " + UriToPathOnKitKat(imageUri));
                     uploadImage(imageUriString);
-                    Toast.makeText(UploadPictureActivity.this,imageUriString, Toast.LENGTH_SHORT).show();
                 }
             }
         });

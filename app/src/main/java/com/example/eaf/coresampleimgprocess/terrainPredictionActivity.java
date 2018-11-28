@@ -79,12 +79,11 @@ import okhttp3.Response;
 public class terrainPredictionActivity extends AppCompatActivity implements MainFragment.OnFragmentInteractionListener, ImageDetailFragment.OnFragmentInteractionListener{
 
     private static final int CHOOSE_FILE_CODE = 1;
-
     private static final String TAG1 = "FileChoose";
     private static final String TAG = "UploadPictureActivity";
     private TextView hint;
     private static final String BASE_URL = "http://10.0.2.2:5000";
-    private MainFragment mainFragment = null;
+    private TPFragment TPFragment = null;
     private ImageDetailFragment imageDetailFragment = null;
     private DrawerLayout drawerLayoutForTP;
     private NavigationView navigationView;
@@ -94,25 +93,15 @@ public class terrainPredictionActivity extends AppCompatActivity implements Main
     List<String> file_List=new ArrayList<>();
     private filePathAdapter myAdapter;
     private ListView listView;
-    /**
-     * 参数类型
-     * "text", 文本
-     * "image", 图片
-     * "audio",音频
-     * "video"，视频
-     * "object",其他
-     */
-    private static final MediaType MEDIA_TYPE_TEXT = MediaType.parse("text/x-markdown; charset=utf-8");
-    private static final MediaType MEDIA_TYPE_JPG = MediaType.parse("image/png");
-    private static final MediaType MEDIA_TYPE_AUDIO = MediaType.parse("audio/mp3");
-    private static final MediaType MEDIA_TYPE_VIDEO = MediaType.parse("video/mp4");
-    private static final MediaType MEDIA_TYPE_OBJECT = MediaType.parse("application/octet-stream");
-    private static final MediaType MEDIA_TYPE_JSON = MediaType.parse("application/json; charset=utf-8");
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_terrain_prediction);
+
+        TPFragment = new TPFragment();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_forTP);
         setSupportActionBar(toolbar);
         final ActionBar actionBar = getSupportActionBar();//这个actionBar实际上是由toolBar来完成的，这里获得的实际上是toolBar
@@ -121,9 +110,11 @@ public class terrainPredictionActivity extends AppCompatActivity implements Main
             actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
             actionBar.setTitle("Terrain Prediction");
         }
+
+
+
         drawerLayoutForTP=findViewById(R.id.drawer_layout_forTP);
         navigationView = findViewById(R.id.nav_view);
-        mainFragment=new MainFragment();
         hint= findViewById(R.id.hint);
 
         //选择完file之后呈现出来
@@ -223,7 +214,7 @@ public class terrainPredictionActivity extends AppCompatActivity implements Main
 //                    Log.d(TAG, "onClick: tttttttttttt " + imageUriString);
 //                    Log.d(TAG, "onClick: ttttttttt2 " + UriToPathOnKitKat(imageUri));
                     //传输TP所需文件
-                    if(file_List.size()==13){
+                    if(file_List.size()==10){
                         for(int j=0;j<file_List.size();j++){
                             File file=new File(file_List.get(j));
                             file.getName();
@@ -244,7 +235,7 @@ public class terrainPredictionActivity extends AppCompatActivity implements Main
                             UriString+=file.getName();
                             uploadFile(UriString);
                         }
-                        mainFragment.loadTPResultFromServer();
+                        TPFragment.loadTPResultFromServer();
                     }
                     else{
                         Toast.makeText(getApplicationContext(),"Please provide enough files to do terrain prediction.",Toast.LENGTH_SHORT).show();
@@ -252,8 +243,6 @@ public class terrainPredictionActivity extends AppCompatActivity implements Main
                 }
             }
         });
-
-
     }
 
     @Override

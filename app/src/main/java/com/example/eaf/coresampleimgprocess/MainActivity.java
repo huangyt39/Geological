@@ -32,6 +32,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.leon.lfilepickerlibrary.LFilePicker;
+
 import java.io.File;
 import java.io.IOException;
 import java.text.BreakIterator;
@@ -79,6 +81,22 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        /**
+         * 动态获取权限，Android 6.0 新特性
+         */
+        if (Build.VERSION.SDK_INT >= 23) {
+            int REQUEST_CODE_CONTACT = 101;
+            String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
+            //验证是否许可权限
+            for (String str : permissions) {
+                if (this.checkSelfPermission(str) != PackageManager.PERMISSION_GRANTED) {
+                    //申请权限
+                    this.requestPermissions(permissions, REQUEST_CODE_CONTACT);
+                    return;
+                }
+            }
+        }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -250,9 +268,17 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
     }
 
     private void openAlbum() {
-        Intent intent = new Intent("android.intent.action.GET_CONTENT");
-        intent.setType("image/*");
-        startActivityForResult(intent, CHOOSE_PHOTO);
+        //可看到的文件大小限制：10M
+        new LFilePicker()
+                .withActivity(MainActivity.this)
+                .withRequestCode(CHOOSE_PHOTO)
+                .withStartPath("/storage/emulated/0")
+                .withIsGreater(false)
+                .withMutilyMode(false)
+                .withFileFilter(new String[]{".jpg"})
+                .withFileSize(10000 * 1024)
+                .withTitle("Files")
+                .start();
     }
 
     @Override
@@ -272,13 +298,8 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
                 mainFragment.loadPictureFromServer();
                 break;
             case CHOOSE_PHOTO:
-                if(resultCode==RESULT_OK) {
-                    if(Build.VERSION.SDK_INT>=19) {
-                        handleImageOnKitKat(data);
-                    } else {
-                        handleImageBeforeKitKat(data);
-                    }
-                }
+                List<String> list = data.getStringArrayListExtra("paths");
+                displayImage(list.get(0));
                 break;
             case REGISTER_AND_LOGIN:
                 if(resultCode==RESULT_OK) {
@@ -293,47 +314,6 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
             default:
                 break;
         }
-    }
-
-    @TargetApi(19)
-    private void handleImageOnKitKat(Intent data) {
-        String imagePath = null;
-        Uri uri = data.getData();
-        Toast.makeText(getApplicationContext(),"load picture from: "+uri,Toast.LENGTH_SHORT ).show();
-        if (DocumentsContract.isDocumentUri(this, uri)) {
-            String docId = DocumentsContract.getDocumentId(uri);
-            if("com.android.providers.media.documents".equals(uri.getAuthority())) {
-                String id = docId.split(":")[1];
-                String selection = MediaStore.Images.Media._ID + "=" + id;
-                imagePath = getImagePath(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, selection);
-            } else if ("com.android.providers.downloads.documents".equals(uri.getAuthority())) {
-                Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(docId));
-                imagePath = getImagePath(contentUri, null);
-            }
-        } else if ("content".equalsIgnoreCase(uri.getScheme())) {
-            imagePath = getImagePath(uri, null);
-        } else if ("file".equalsIgnoreCase(uri.getScheme())) {
-            imagePath = uri.getPath();
-        }
-        displayImage(imagePath);
-    }
-
-    private void handleImageBeforeKitKat(Intent data) {
-        Uri uri = data.getData();
-        String imagePath = getImagePath(uri, null);
-        displayImage(imagePath);
-    }
-
-    private String getImagePath(Uri uri, String selection) {
-        String path = null;
-        Cursor cursor = getContentResolver().query(uri, null, selection, null, null);
-        if(cursor!=null) {
-            if(cursor.moveToFirst()) {
-                path = cursor.getString(cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA));
-            }
-            cursor.close();
-        }
-        return path;
     }
 
     private void displayImage(String imagePath) {
