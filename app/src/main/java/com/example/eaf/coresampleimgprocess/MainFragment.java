@@ -53,8 +53,8 @@ public class MainFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    private static final String GET_IMAGE_URL = "http://10.0.2.2:5000/getimage?imageindex=";
-    private static final String GET_TPResult_URL = "http://10.0.2.2:5000/getpredictresult?predictresultindex=";
+    private static final String GET_IMAGE_URL = "http://47.107.126.23:5000/getimage?imageindex=";
+    private static final String GET_TPResult_URL = "http://47.107.126.23:5000/getpredictresult?predictresultindex=";
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -289,7 +289,7 @@ public class MainFragment extends Fragment {
 
     private int getImageNumber() {
         Log.d(TAG, "getImageNumber: start");
-        String imageNumberUrl = "http://10.0.2.2:5000/getimagesnumber";
+        String imageNumberUrl = "http://47.107.126.23:5000/getimagesnumber";
         Request.Builder builder = new Request.Builder();
         Request request = builder.url(imageNumberUrl).get().build();
         try {

@@ -44,6 +44,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -81,14 +82,13 @@ public class terrainPredictionActivity extends AppCompatActivity implements TPFr
     private static final int CHOOSE_FILE_CODE = 1;
     private static final String TAG1 = "FileChoose";
     private static final String TAG = "UploadPictureActivity";
-    private TextView hint;
-    private static final String BASE_URL = "http://10.0.2.2:5000";
+    private static final String BASE_URL = "http://47.107.126.23:5000";
     private ImageDetailFragment imageDetailFragment = null;
     private DrawerLayout drawerLayoutForTP;
     private NavigationView navigationView;
     private boolean menusState = false;
     private ActionBarDrawerToggle mDrawerToggle;
-
+    private FrameLayout container;
     public static TPFragment tpFragment = null;
     private FragmentManager manager;
     private FragmentTransaction transaction;
@@ -115,10 +115,10 @@ public class terrainPredictionActivity extends AppCompatActivity implements TPFr
         tpFragment = new TPFragment();
         replaceFragment(tpFragment);
 
+        container=findViewById(R.id.container);
 
         drawerLayoutForTP=findViewById(R.id.drawer_layout_forTP);
         navigationView = findViewById(R.id.nav_view);
-        hint= findViewById(R.id.hint);
 
         //选择完file之后呈现出来
         listView=findViewById(R.id.files_list);
@@ -208,14 +208,6 @@ public class terrainPredictionActivity extends AppCompatActivity implements TPFr
                     Toast.makeText(terrainPredictionActivity.this,"please login before upload image", Toast.LENGTH_SHORT).show();
                     Log.d(TAG, "onClick: no login before upload");
                 } else {
-//                    String filePath = imageUri.getEncodedPath();
-//                    Log.d(TAG, "onClick: hhhhhhhhhhhhh "+imageUri.toString());
-//                    final String imagePath = imageUri.decode(filePath);
-//                    Log.d(TAG, "onClick: hhhhhhhhhhhhh "+imagePath.toString());
-//                    final String imagePath = imageUri.toString();
-//                    uploadImage(imagePath);
-//                    Log.d(TAG, "onClick: tttttttttttt " + imageUriString);
-//                    Log.d(TAG, "onClick: ttttttttt2 " + UriToPathOnKitKat(imageUri));
                     //传输TP所需文件
                     if(file_List.size()==10){
                         for(int j=0;j<file_List.size();j++){
@@ -238,6 +230,7 @@ public class terrainPredictionActivity extends AppCompatActivity implements TPFr
                             UriString+=file.getName();
                             uploadFile(UriString);
                         }
+                        container.setVisibility(View.VISIBLE);
                         tpFragment.loadTPResultFromServer();
                     }
                     else{
@@ -256,8 +249,10 @@ public class terrainPredictionActivity extends AppCompatActivity implements TPFr
                 //List<String> list = data.getStringArrayListExtra(Constant.RESULT_INFO);//Constant.RESULT_INFO == "paths"
                 List<String> list = data.getStringArrayListExtra("paths");
                 Toast.makeText(getApplicationContext(), "selected " + list.size() , Toast.LENGTH_SHORT).show();
+                if(file_List.size()>0){
+                    file_List.clear();
+                }
                 if(list.size()!=0){
-                    hint.setText("The files you select:");
                     for(int i=0;i<list.size();i++){
                         file_List.add(list.get(i));
                     }
@@ -324,12 +319,6 @@ public class terrainPredictionActivity extends AppCompatActivity implements TPFr
 
         @Override
         protected void onPostExecute(String result) {
-            if(!"error".equals(result)) {
-                Log.i(TAG, "the address of picture " + result);
-                Toast.makeText(terrainPredictionActivity.this, "上传成功", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(terrainPredictionActivity.this, "上传失败，请重新登录后再试", Toast.LENGTH_SHORT).show();
-            }
         }
     }
 

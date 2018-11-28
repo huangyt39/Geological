@@ -47,7 +47,7 @@ public class UploadPictureActivity extends AppCompatActivity{
 
     private static final String TAG = "UploadPictureActivity";
 
-    private static final String BASE_URL = "http://10.0.2.2:5000";
+    private static final String BASE_URL = "http://47.107.126.23:5000";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

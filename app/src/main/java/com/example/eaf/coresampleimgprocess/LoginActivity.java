@@ -21,8 +21,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private static final String TAG = "LoginActivity";
 
-    private String registerUrl = "http://10.0.2.2:5000/register";
-    private String loginUrl = "http://10.0.2.2:5000/login";
+    private String registerUrl = "http://47.107.126.23:5000/register";
+    private String loginUrl = "http://47.107.126.23:5000/login";
     Button gotoImageProcessing;
     Button gotoTerrainPrediction;
     Button registerButton;

@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,8 +37,8 @@ public class TPFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    private static final String GET_TPResult_URL = "http://10.0.2.2:5000/getpredictresult?predictresultindex=";
-
+    private static final String GET_TPResult_URL = "http://47.107.126.23:5000/getpredictresult?predictresultindex=";
+    private static final String TAG = "TPFragment";
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -45,6 +46,8 @@ public class TPFragment extends Fragment {
     private ImageView tpResult1;
     private ImageView tpResult2;
     private Bitmap bitmap1;
+    private Bitmap bitmap2;
+    private TextView hint;
     private OnFragmentInteractionListener mListener;
 
     public TPFragment() {
@@ -84,6 +87,7 @@ public class TPFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         tpResult1=getView().findViewById(R.id.tpResult1);
         tpResult2=getView().findViewById(R.id.tpResult2);
+        hint=getView().findViewById(R.id.hint);
     }
 
     @Override
@@ -152,13 +156,8 @@ public class TPFragment extends Fragment {
 //            return "success";
             Log.d(TAG, "doInBackground: get all image start");
             Log.d(TAG, "doInBackground: start getting the " + String.valueOf(0) + "th image");
-            Bitmap currentImage = getTPResult(String.valueOf(0));
-            if (currentImage != null) {
-                bitmap1=currentImage;
-                Log.d(TAG, "doInBackground: add to bitmapList success");
-            } else {
-                Log.d(TAG, "doInBackground: add to bitmapList error");
-            }
+            bitmap1 = getTPResult(String.valueOf(0));
+            bitmap2=getTPResult(String.valueOf(1));
             return "success";
         }
 
@@ -166,6 +165,8 @@ public class TPFragment extends Fragment {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             tpResult1.setImageBitmap(bitmap1);
+            tpResult2.setImageBitmap(bitmap2);
+            hint.setText("Terrain prediction result:");
             Log.d(TAG, "onPostExecute: final notify");
         }
     }
@@ -192,6 +193,7 @@ public class TPFragment extends Fragment {
 
     public void loadTPResultFromServer(){
         new TPFragment.GetTPResultTask().execute();
+        hint.setText("Loading result...");
     }
 
 
