@@ -144,9 +144,9 @@ def handleImage():
         return "no image"
     else:
         imagefilename = str(time.time()) + ".jpg"
-        userpath = os.path.join(
-                config.IMAGE_STORE_DIR, username)
-        image.save(os.path.join(userpath, imagefilename))
+        # userpath = os.path.join(
+        #         config.IMAGE_STORE_DIR, username)
+        # image.save(os.path.join(userpath, imagefilename))
         image.save(os.path.join(config.IMAGE_STORE_DIR, image.filename))
         session["imagefilename"] = imagefilename
         return "image save successfully"
