@@ -137,7 +137,7 @@ def handleImage():
     #if not ('isLogin' in session) or not session['isLogin']:
     #    app.logger.debug("uploadimage without login")
     #    return "sorry, you haven't login"
-    username = request.form['username']
+    # username = request.form['username']
     image = request.files['image']
     print(image)
     if image is None:
@@ -196,7 +196,7 @@ def handleArcgisFiles():
 @app.route("/getpredictresult", methods=['GET'])
 def returnPredictImage():
     predict.predict('范围', '类别')
-    predictImageFileName = "result.jpg"
+    predictImageFileName = "result.png"
     currentImageFilePath = os.path.join(
         config.IMAGE_PREDICTED, predictImageFileName)
     return send_file(currentImageFilePath, mimetype="image/jpeg")

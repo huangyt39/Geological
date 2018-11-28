@@ -94,7 +94,7 @@ def predict(filenameArea, filenameData):
     #save result and show figure
     figure_fig = plt.gcf()  # 'get current figure'
     # figure_fig.savefig('./result/result.eps', format='eps', dpi=1000)
-    figure_fig.savefig('./predictimg/result.jpg', format='jpg', dpi=1000)
+    figure_fig.savefig('./predictimg/result.png', format='png', dpi=1000)
     # plt.show()
 
     fig = plt.figure()
@@ -122,5 +122,5 @@ def predict(filenameArea, filenameData):
     #save result and show figure
     figure_fig = plt.gcf()  # 'get current figure'
     # figure_fig.savefig('data.eps', format='eps', dpi=1000)
-    figure_fig.savefig('./predictimg/data.jpg', format='jpg', dpi=1000)
+    figure_fig.savefig('./predictimg/data.png', format='png', dpi=1000)
     # plt.show()
