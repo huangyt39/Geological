@@ -76,19 +76,22 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 
-public class terrainPredictionActivity extends AppCompatActivity implements MainFragment.OnFragmentInteractionListener, ImageDetailFragment.OnFragmentInteractionListener{
+public class terrainPredictionActivity extends AppCompatActivity implements TPFragment.OnFragmentInteractionListener {
 
     private static final int CHOOSE_FILE_CODE = 1;
     private static final String TAG1 = "FileChoose";
     private static final String TAG = "UploadPictureActivity";
     private TextView hint;
     private static final String BASE_URL = "http://10.0.2.2:5000";
-    private TPFragment TPFragment = null;
     private ImageDetailFragment imageDetailFragment = null;
     private DrawerLayout drawerLayoutForTP;
     private NavigationView navigationView;
     private boolean menusState = false;
     private ActionBarDrawerToggle mDrawerToggle;
+
+    public static TPFragment tpFragment = null;
+    private FragmentManager manager;
+    private FragmentTransaction transaction;
 
     List<String> file_List=new ArrayList<>();
     private filePathAdapter myAdapter;
@@ -100,8 +103,6 @@ public class terrainPredictionActivity extends AppCompatActivity implements Main
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_terrain_prediction);
 
-        TPFragment = new TPFragment();
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar_forTP);
         setSupportActionBar(toolbar);
         final ActionBar actionBar = getSupportActionBar();//这个actionBar实际上是由toolBar来完成的，这里获得的实际上是toolBar
@@ -111,6 +112,8 @@ public class terrainPredictionActivity extends AppCompatActivity implements Main
             actionBar.setTitle("Terrain Prediction");
         }
 
+        tpFragment = new TPFragment();
+        replaceFragment(tpFragment);
 
 
         drawerLayoutForTP=findViewById(R.id.drawer_layout_forTP);
@@ -235,7 +238,7 @@ public class terrainPredictionActivity extends AppCompatActivity implements Main
                             UriString+=file.getName();
                             uploadFile(UriString);
                         }
-                        TPFragment.loadTPResultFromServer();
+                        tpFragment.loadTPResultFromServer();
                     }
                     else{
                         Toast.makeText(getApplicationContext(),"Please provide enough files to do terrain prediction.",Toast.LENGTH_SHORT).show();
@@ -269,8 +272,12 @@ public class terrainPredictionActivity extends AppCompatActivity implements Main
     }
 
 
-
-
+    public void replaceFragment(Fragment fragment) {
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction transaction = fragmentManager.beginTransaction();
+        transaction.replace(R.id.container, fragment);
+        transaction.commit();
+    }
 
     //toolbar 相关事件
     @Override

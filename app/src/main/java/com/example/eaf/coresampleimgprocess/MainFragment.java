@@ -1,12 +1,14 @@
 package com.example.eaf.coresampleimgprocess;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
@@ -21,6 +23,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -62,7 +67,7 @@ public class MainFragment extends Fragment {
     private List<SubImage> bitmapList = new ArrayList<>();
     private Bitmap bitmap;
     private RecyclerView recyclerView = null;
-
+    private Context mContext;
     public MainFragment() {
         // Required empty public constructor
     }
@@ -88,6 +93,7 @@ public class MainFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.mContext = getActivity();
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -102,8 +108,6 @@ public class MainFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         recyclerView = (RecyclerView) getView().findViewById(R.id.recycle_view_main_fragment);
 
-        TPResult=getView().findViewById(R.id.TPResult);
-        hint=getView().findViewById(R.id.hint);
 
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(manager);
@@ -205,7 +209,6 @@ public class MainFragment extends Fragment {
 
 
     class GetTPResultTask extends AsyncTask<String, Integer, String> {
-        Bitmap currentImage;
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -213,26 +216,36 @@ public class MainFragment extends Fragment {
 
         @Override
         protected String doInBackground(String... strings) {
-//            return null;
-            currentImage= getTPResult(String.valueOf(0));
-            if (currentImage != null) {
-                bitmap=currentImage;
-                TPResult.setImageBitmap(bitmap);
-                hint.setText("Terrain prediction result:");
-                return "success";
-            } else {
-                return "error";
-            }
+//            Log.d(TAG, "doInBackground: get all image begin image number : " + strings[0]);
+//            bitmapList.clear();
+//            int imageNumber = getImageNumber();
+//            for (int i=1; i<=imageNumber; i++) {
+//                Log.d(TAG, "doInBackground: start getting the " + String.valueOf(i) + " th image");
+//                new GetSplitImageTask().execute(String.valueOf(i));
+//            }
+//            return "success";
+            Log.d(TAG, "doInBackground: get all image start");
+            bitmapList.clear();
+            int imageNumber = getImageNumber();
+                Log.d(TAG, "doInBackground: start getting the " + String.valueOf(0) + "th image");
+                Bitmap currentImage = getImage(String.valueOf(0));
+                if (currentImage != null) {
+                    bitmapList.add(new SubImage(currentImage));
+                    Log.d(TAG, "doInBackground: add to bitmapList success");
+                } else {
+                    Log.d(TAG, "doInBackground: add to bitmapList error");
+                }
+
+            Log.d(TAG, "doInBackground: the size of bitmapList finally " + String.valueOf(bitmapList.size()));
+            return "success";
         }
+
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            Log.d(TAG, "onPostExecute: notify change");
-            Log.d(TAG, "onPostExecute: ");
-            Log.d(TAG, "onPostExecute: the size of bitmap " + String.valueOf(bitmapList.size()));
-            /*hint.setText("Result for Terrain Prediction:");
-            TPResult.setImageBitmap(currentImage);
-            TPResult.setVisibility(View.VISIBLE);*/
+            recyclerView.getAdapter().notifyDataSetChanged();
+            Log.d(TAG, "onPostExecute: final notify");
+            Log.d(TAG, "onPostExecute: final notify the size of bitmapList " + String.valueOf(bitmapList.size()));
         }
     }
 
@@ -290,6 +303,26 @@ public class MainFragment extends Fragment {
             Log.d(TAG, "getImageNumber: error end");
             return 0;
         }
+    }
+
+    public static String saveImage(Bitmap bmp) {
+        File appDir = new File(Environment.getExternalStorageDirectory(), "TPResult");
+        if (!appDir.exists()) {
+            appDir.mkdir();
+        }
+        String fileName = System.currentTimeMillis() + ".jpg";
+        File file = new File(appDir, fileName);
+        try {
+            FileOutputStream fos = new FileOutputStream(file);
+            bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            fos.flush();
+            fos.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return Environment.getExternalStorageDirectory()+"/TPResult/"+fileName;
     }
 
     public void loadPictureFromServer() {

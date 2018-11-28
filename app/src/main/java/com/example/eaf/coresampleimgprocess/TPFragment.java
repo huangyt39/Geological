@@ -1,12 +1,26 @@
 package com.example.eaf.coresampleimgprocess;
 
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+
+import java.io.IOException;
+import java.io.InputStream;
+
+import okhttp3.Request;
+import okhttp3.Response;
+
+import static android.content.ContentValues.TAG;
 
 
 /**
@@ -22,11 +36,15 @@ public class TPFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String GET_TPResult_URL = "http://10.0.2.2:5000/getpredictresult?predictresultindex=";
 
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
+    private ImageView tpResult1;
+    private ImageView tpResult2;
+    private Bitmap bitmap1;
     private OnFragmentInteractionListener mListener;
 
     public TPFragment() {
@@ -58,6 +76,14 @@ public class TPFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+    }
+
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        tpResult1=getView().findViewById(R.id.tpResult1);
+        tpResult2=getView().findViewById(R.id.tpResult2);
     }
 
     @Override
@@ -105,4 +131,68 @@ public class TPFragment extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+
+
+    class GetTPResultTask extends AsyncTask<String, Integer, String> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected String doInBackground(String... strings) {
+//            Log.d(TAG, "doInBackground: get all image begin image number : " + strings[0]);
+//            bitmapList.clear();
+//            int imageNumber = getImageNumber();
+//            for (int i=1; i<=imageNumber; i++) {
+//                Log.d(TAG, "doInBackground: start getting the " + String.valueOf(i) + " th image");
+//                new GetSplitImageTask().execute(String.valueOf(i));
+//            }
+//            return "success";
+            Log.d(TAG, "doInBackground: get all image start");
+            Log.d(TAG, "doInBackground: start getting the " + String.valueOf(0) + "th image");
+            Bitmap currentImage = getTPResult(String.valueOf(0));
+            if (currentImage != null) {
+                bitmap1=currentImage;
+                Log.d(TAG, "doInBackground: add to bitmapList success");
+            } else {
+                Log.d(TAG, "doInBackground: add to bitmapList error");
+            }
+            return "success";
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            tpResult1.setImageBitmap(bitmap1);
+            Log.d(TAG, "onPostExecute: final notify");
+        }
+    }
+
+    private Bitmap getTPResult(String imageIndex) {
+        Log.d(TAG, "getImage: getting " + imageIndex);
+        String imageUrl = GET_TPResult_URL + imageIndex;
+        Request.Builder builder = new Request.Builder();
+        Request request = builder.url(imageUrl).get().build();
+        try {
+            Response response = MainActivity.okHttpClientWithCookie.newCall(request).execute();
+            InputStream inputStream = response.body().byteStream();
+            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
+            Log.d(TAG, "getImage: getting " + imageIndex + " done");
+            return bitmap;
+        } catch (IOException e) {
+            Log.d(TAG, "getImage: error in getImage");
+            e.printStackTrace();
+            Log.d(TAG, "getImage: error end");
+            return null;
+        }
+
+    }
+
+    public void loadTPResultFromServer(){
+        new TPFragment.GetTPResultTask().execute();
+    }
+
+
 }
