@@ -200,7 +200,7 @@ def returnPredictImage():
     predictImageFileName = {0:'data.png', 1:'result.png','0':'data.png', '1':'result.png'}
     currentImageFilePath = os.path.join(
         config.IMAGE_PREDICTED, predictImageFileName[predictresultindex])
-    return send_file(currentImageFilePath, mimetype="image/jpeg")
+    return send_file(currentImageFilePath, mimetype="image/png")
 
 @app.route("/checkLogin")
 def checkLogin():
