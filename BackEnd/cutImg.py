@@ -49,7 +49,7 @@ def cutImg(img_path, img_name):
     if lightSet[-1] < m - 200:
         lightSet = np.append(lightSet, m-1)
 
-    for index in range(len(lightSet) - 1):
+    for index in range(1, len(lightSet)):
         tempimagename = os.path.join(
                 config.IMAGE_AFTER_PROCESS_DIR, img_name[:img_name.find('.jpg')] + str(index) + '.jpg')
         cv2.imwrite(tempimagename, img[int(lightSet[index]):int(lightSet[index+1])])

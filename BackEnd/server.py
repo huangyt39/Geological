@@ -147,7 +147,7 @@ def handleImage():
         # userpath = os.path.join(
         #         config.IMAGE_STORE_DIR, username)
         # image.save(os.path.join(userpath, imagefilename))
-        image.save(os.path.join(config.IMAGE_STORE_DIR, image.filename))
+        image.save(os.path.join(config.IMAGE_STORE_DIR, imagefilename))
         session["imagefilename"] = imagefilename
         return "image save successfully"
 
