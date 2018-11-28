@@ -52,7 +52,7 @@ def cutImg(img_path, img_name):
     for index in range(1, len(lightSet)):
         tempimagename = os.path.join(
                 config.IMAGE_AFTER_PROCESS_DIR, img_name[:img_name.find('.jpg')] + str(index) + '.jpg')
-        cv2.imwrite(tempimagename, img[int(lightSet[index]):int(lightSet[index+1])])
+        cv2.imwrite(tempimagename, img[int(lightSet[index - 1]):int(lightSet[index])])
     
     return len(lightSet) - 1
     
