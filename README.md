@@ -24,20 +24,20 @@
 #### 注册和登录 主界面
 
 <figure class="half">
-    <img src="https://img1.doubanio.com/view/status/m/public/7ac443a0b86d1d7.webp">
-    <img src="https://img3.doubanio.com/view/status/m/public/1fc4084e41edbbf.webp">
+    <img src="https://img1.doubanio.com/view/status/m/public/7ac443a0b86d1d7.webp" style="zoom:80%">
+    <img src="https://img3.doubanio.com/view/status/m/public/1fc4084e41edbbf.webp" style="zoom:80%">
 </figure>
 
 #### 图像切割与拼接
 
 <figure class="half">
-    <img src="https://img1.doubanio.com/view/status/m/public/8fd331628e5ad8c.webp">
-    <img src="https://img1.doubanio.com/view/status/m/public/8a528ff694500bb.webp">
+    <img src="https://img1.doubanio.com/view/status/m/public/8fd331628e5ad8c.webp" style="zoom:80%">
+    <img src="https://img1.doubanio.com/view/status/m/public/8a528ff694500bb.webp" style="zoom:80%">
 </figure>
 
 #### 地质预测
 
 <figure class="half">
-    <img src="https://img3.doubanio.com/view/status/m/public/42612d4a49ddcbf.webp">
-    <img src="https://img3.doubanio.com/view/status/m/public/9b88c3d557f4322.webp">
+    <img src="https://img3.doubanio.com/view/status/m/public/42612d4a49ddcbf.webp" style="zoom:80%">
+    <img src="https://img3.doubanio.com/view/status/m/public/9b88c3d557f4322.webp" style="zoom:80%">
 </figure>
