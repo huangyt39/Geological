@@ -1,6 +1,7 @@
 package com.example.eaf.coresampleimgprocess;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -8,6 +9,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +18,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -43,10 +47,10 @@ public class TPFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    private ImageView tpResult1;
-    private ImageView tpResult2;
-    private Bitmap bitmap1;
-    private Bitmap bitmap2;
+    public static ImageView tpResult1;
+    public static ImageView tpResult2;
+    public static Bitmap bitmap1;
+    public static Bitmap bitmap2;
     private TextView hint;
     private OnFragmentInteractionListener mListener;
 
@@ -87,6 +91,7 @@ public class TPFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         tpResult1=getView().findViewById(R.id.tpResult1);
         tpResult2=getView().findViewById(R.id.tpResult2);
+
         hint=getView().findViewById(R.id.hint);
     }
 
@@ -157,7 +162,7 @@ public class TPFragment extends Fragment {
             Log.d(TAG, "doInBackground: get all image start");
             Log.d(TAG, "doInBackground: start getting the " + String.valueOf(0) + "th image");
             bitmap1 = getTPResult(String.valueOf(0));
-            bitmap2=getTPResult(String.valueOf(1));
+            bitmap2 = getTPResult(String.valueOf(1));
             return "success";
         }
 
@@ -166,6 +171,29 @@ public class TPFragment extends Fragment {
             super.onPostExecute(s);
             tpResult1.setImageBitmap(bitmap1);
             tpResult2.setImageBitmap(bitmap2);
+            tpResult1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent=new Intent(getActivity(),imageDetailActivity.class);
+                    ByteArrayOutputStream baos=new ByteArrayOutputStream();
+                    bitmap1.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                    byte [] bitmapByte =baos.toByteArray();
+                    intent.putExtra("bitmap", bitmapByte);
+                    startActivity(intent);
+                }
+            });
+
+            tpResult2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent=new Intent(getActivity(),imageDetailActivity.class);
+                    ByteArrayOutputStream baos=new ByteArrayOutputStream();
+                    bitmap2.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                    byte [] bitmapByte =baos.toByteArray();
+                    intent.putExtra("bitmap", bitmapByte);
+                    startActivity(intent);
+                }
+            });
             hint.setText("Terrain prediction result:");
             Log.d(TAG, "onPostExecute: final notify");
         }

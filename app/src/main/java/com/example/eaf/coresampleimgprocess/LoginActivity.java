@@ -110,6 +110,7 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(getApplicationContext(),"Please choose what you want to do next.",Toast.LENGTH_SHORT).show();
                 finishLogin("success");
             }
+            else Toast.makeText(getApplicationContext(),"Fail to login,you may check your password or register first.",Toast.LENGTH_SHORT).show();
         }
     }
 

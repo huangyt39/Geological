@@ -15,6 +15,13 @@
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="match_parent"-->
         <!--android:id="@+id/main_fragment_imageview"/>-->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/IP_hint"
+        android:layout_margin="30dp"
+        android:text="Select the image that you want to process."
+        android:textSize="20sp"/>
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

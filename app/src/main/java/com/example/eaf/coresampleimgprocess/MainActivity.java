@@ -101,15 +101,17 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+
         final ActionBar actionBar = getSupportActionBar();//这个actionBar实际上是由toolBar来完成的，这里获得的实际上是toolBar
         if(actionBar!=null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
         }
 
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setCheckedItem(R.id.nav_main_item);//设置默认选中的Item
+
         mainFragment = new MainFragment();
         imageDetailFragment = new ImageDetailFragment();
         replaceFragment(mainFragment);
@@ -129,6 +131,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
                         break;
                     case R.id.logout:
                         loginStatus = false;
+                        currentUsername="";
                         usernameTextView.setText("anoynomus");
                         Toast.makeText(MainActivity.this, "logout successfully", Toast.LENGTH_SHORT).show();
                         break;
@@ -153,7 +156,10 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "FAB clicked", Toast.LENGTH_SHORT).show();
+                if(!loginStatus){
+                    Toast.makeText(MainActivity.this, "Please login first.", Toast.LENGTH_SHORT).show();
+                }
+                else Toast.makeText(MainActivity.this, "You haven`t select the image to process.", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -283,7 +289,7 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch(requestCode) {
+        switch(requestCode ) {
             case TAKE_PHOTO:
                 Toast.makeText(this, "on take photo result", Toast.LENGTH_SHORT).show();
                 if(resultCode == RESULT_OK) {
@@ -298,8 +304,10 @@ public class MainActivity extends AppCompatActivity implements MainFragment.OnFr
                 mainFragment.loadPictureFromServer();
                 break;
             case CHOOSE_PHOTO:
-                List<String> list = data.getStringArrayListExtra("paths");
-                displayImage(list.get(0));
+                if(data!=null) {
+                    List<String> list = data.getStringArrayListExtra("paths");
+                    displayImage(list.get(0));
+                }
                 break;
             case REGISTER_AND_LOGIN:
                 if(resultCode==RESULT_OK) {

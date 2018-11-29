@@ -26,11 +26,16 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".MainActivity">
+        <activity android:name=".splashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAINACTIVITY" />
             </intent-filter>
         </activity>
         <activity
@@ -39,6 +44,7 @@
             android:theme="@style/AppTheme" />
         <activity android:name=".LoginActivity" />
         <activity android:name=".terrainPredictionActivity" />
+        <activity android:name=".imageDetailActivity"></activity>
     </application>
 
 </manifest>

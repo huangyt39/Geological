@@ -70,6 +70,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.Request;
@@ -77,27 +78,21 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 
-public class terrainPredictionActivity extends AppCompatActivity implements TPFragment.OnFragmentInteractionListener {
+public class terrainPredictionActivity extends AppCompatActivity implements TPFragment.OnFragmentInteractionListener,ImageDetailFragment.OnFragmentInteractionListener {
 
     private static final int CHOOSE_FILE_CODE = 1;
     private static final String TAG1 = "FileChoose";
     private static final String TAG = "UploadPictureActivity";
     private static final String BASE_URL = "http://47.107.126.23:5000";
-    private ImageDetailFragment imageDetailFragment = null;
-    private DrawerLayout drawerLayoutForTP;
-    private NavigationView navigationView;
+    public static ImageDetailFragment imageDetailFragment = null;
     private boolean menusState = false;
-    private ActionBarDrawerToggle mDrawerToggle;
     private FrameLayout container;
     public static TPFragment tpFragment = null;
-    private FragmentManager manager;
-    private FragmentTransaction transaction;
-
     List<String> file_List=new ArrayList<>();
     private filePathAdapter myAdapter;
     private ListView listView;
-
-
+    private TextView selectFileHint;
+    public static FragmentManager fragmentManager;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -107,21 +102,19 @@ public class terrainPredictionActivity extends AppCompatActivity implements TPFr
         setSupportActionBar(toolbar);
         final ActionBar actionBar = getSupportActionBar();//这个actionBar实际上是由toolBar来完成的，这里获得的实际上是toolBar
         if(actionBar!=null) {
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setHomeAsUpIndicator(R.drawable.ic_menu);
+            actionBar.setDisplayHomeAsUpEnabled(false);
             actionBar.setTitle("Terrain Prediction");
         }
-
         tpFragment = new TPFragment();
+        fragmentManager=getSupportFragmentManager();
         replaceFragment(tpFragment);
 
         container=findViewById(R.id.container);
-
-        drawerLayoutForTP=findViewById(R.id.drawer_layout_forTP);
-        navigationView = findViewById(R.id.nav_view);
+        imageDetailFragment=new ImageDetailFragment();
 
         //选择完file之后呈现出来
         listView=findViewById(R.id.files_list);
+        selectFileHint=findViewById(R.id.selectFileHint);
         myAdapter=new filePathAdapter(this,file_List){};
         listView.setAdapter(myAdapter);
         //listView点击事件——点击与长按
@@ -163,37 +156,6 @@ public class terrainPredictionActivity extends AppCompatActivity implements TPFr
                 return true;
             }
         });
-        //修改当前登录用户
-        View headerLayout = navigationView.getHeaderView(0);
-        TextView username=headerLayout.findViewById(R.id.username);
-        username.setText(MainActivity.currentUsername);
-
-        navigationView.setCheckedItem(R.id.nav_main_item);//设置默认选中的Item
-
-        mDrawerToggle = new ActionBarDrawerToggle(this, drawerLayoutForTP,
-                R.string.app_name, R.string.app_name) {
-            @Override
-            public void onDrawerOpened(View drawerView) {
-                super.onDrawerOpened(drawerView);
-                menusState = true;
-            }
-            @Override
-            public void onDrawerClosed(View drawerView) {
-                super.onDrawerClosed(drawerView);
-                menusState = false;
-            }
-
-        };
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View arg0) {
-                if (menusState) {
-                    drawerLayoutForTP.closeDrawer(Gravity.LEFT);
-                } else {
-                    drawerLayoutForTP.openDrawer(Gravity.LEFT);
-                }
-            }
-        });
 
 
         final FloatingActionButton uploadButton = (FloatingActionButton) findViewById(R.id.confirmButton);
@@ -209,7 +171,7 @@ public class terrainPredictionActivity extends AppCompatActivity implements TPFr
                     Log.d(TAG, "onClick: no login before upload");
                 } else {
                     //传输TP所需文件
-                    if(file_List.size()==10){
+                    if(file_List.size()>=10){
                         for(int j=0;j<file_List.size();j++){
                             File file=new File(file_List.get(j));
                             file.getName();
@@ -257,6 +219,7 @@ public class terrainPredictionActivity extends AppCompatActivity implements TPFr
                         file_List.add(list.get(i));
                     }
                     myAdapter.notifyDataSetChanged();
+                    selectFileHint.setText("The files you select: \n(long press to delete the file you don`t want to upload)");
                 }
             }
         }
@@ -267,8 +230,7 @@ public class terrainPredictionActivity extends AppCompatActivity implements TPFr
     }
 
 
-    public void replaceFragment(Fragment fragment) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
+    public static void replaceFragment(Fragment fragment) {
         FragmentTransaction transaction = fragmentManager.beginTransaction();
         transaction.replace(R.id.container, fragment);
         transaction.commit();
@@ -322,28 +284,6 @@ public class terrainPredictionActivity extends AppCompatActivity implements TPFr
         }
     }
 
-    private String doGet(String url) {
-        Log.d(TAG, "doGet: begin");
-        Request.Builder reqBuilder = new Request.Builder();
-        Request request = reqBuilder.url(url).get().build();
-        Log.d(TAG, "doGet: try");
-        try {
-            Response response = MainActivity.okHttpClientWithCookie.newCall(request).execute();
-            Log.d(TAG, "doGet: reponse code is " + String.valueOf(response.code()));
-            if (response.isSuccessful()) {
-                Log.d(TAG, "doGet: get body");
-                String resultValue = response.body().string();
-                Log.d(TAG, "doGet: succ");
-                return resultValue;
-            }
-            return "error";
-        } catch (IOException e) {
-            Log.d(TAG, "doGet: here is error");
-            e.printStackTrace();
-            Log.d(TAG, "doGet: doGet error");
-            return "error";
-        }
-    }
 
     private String doPost(String filePath) {
 

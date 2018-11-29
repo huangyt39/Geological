@@ -4,11 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.example.eaf.coresampleimgprocess.UploadPictureActivity"
-    tools:showIn="@layout/activity_upload_picture">
+    tools:context=".imageDetailActivity">
+
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/upload_imageview"/>
+        android:scaleType="fitCenter"
+        android:id="@+id/imageDetail"/>
 </android.support.constraint.ConstraintLayout>

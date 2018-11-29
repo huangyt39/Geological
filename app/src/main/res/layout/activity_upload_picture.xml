@@ -28,6 +28,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/fab_margin"
+        app:backgroundTint="#8cd8e2"
+        app:rippleColor="#f46e49"
         app:srcCompat="@drawable/ic_done" />
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/cancel_upload_button"
@@ -35,6 +37,8 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
         android:layout_margin="16dp"
+        app:backgroundTint="#8cd8e2"
+        app:rippleColor="#f46e49"
         android:src="@drawable/ic_cancel"/>
 
 </android.support.design.widget.CoordinatorLayout>

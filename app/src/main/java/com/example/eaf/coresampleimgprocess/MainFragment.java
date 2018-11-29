@@ -54,12 +54,10 @@ public class MainFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
 
     private static final String GET_IMAGE_URL = "http://47.107.126.23:5000/getimage?imageindex=";
-    private static final String GET_TPResult_URL = "http://47.107.126.23:5000/getpredictresult?predictresultindex=";
-    // TODO: Rename and change types of parameters
+// TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
-    private ImageView TPResult;
     private TextView hint;
 
     private OnFragmentInteractionListener mListener;
@@ -108,7 +106,7 @@ public class MainFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         recyclerView = (RecyclerView) getView().findViewById(R.id.recycle_view_main_fragment);
 
-
+        hint=getView().findViewById(R.id.IP_hint);
         LinearLayoutManager manager = new LinearLayoutManager(getActivity());
         recyclerView.setLayoutManager(manager);
         ImageAdapter imageAdapter = new ImageAdapter(bitmapList, (MainActivity)getActivity());
@@ -206,68 +204,6 @@ public class MainFragment extends Fragment {
     }
 
 
-
-
-    class GetTPResultTask extends AsyncTask<String, Integer, String> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected String doInBackground(String... strings) {
-//            Log.d(TAG, "doInBackground: get all image begin image number : " + strings[0]);
-//            bitmapList.clear();
-//            int imageNumber = getImageNumber();
-//            for (int i=1; i<=imageNumber; i++) {
-//                Log.d(TAG, "doInBackground: start getting the " + String.valueOf(i) + " th image");
-//                new GetSplitImageTask().execute(String.valueOf(i));
-//            }
-//            return "success";
-            Log.d(TAG, "doInBackground: get all image start");
-            bitmapList.clear();
-            int imageNumber = getImageNumber();
-                Log.d(TAG, "doInBackground: start getting the " + String.valueOf(0) + "th image");
-                Bitmap currentImage = getImage(String.valueOf(0));
-                if (currentImage != null) {
-                    bitmapList.add(new SubImage(currentImage));
-                    Log.d(TAG, "doInBackground: add to bitmapList success");
-                } else {
-                    Log.d(TAG, "doInBackground: add to bitmapList error");
-                }
-
-            Log.d(TAG, "doInBackground: the size of bitmapList finally " + String.valueOf(bitmapList.size()));
-            return "success";
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-            recyclerView.getAdapter().notifyDataSetChanged();
-            Log.d(TAG, "onPostExecute: final notify");
-            Log.d(TAG, "onPostExecute: final notify the size of bitmapList " + String.valueOf(bitmapList.size()));
-        }
-    }
-
-    private Bitmap getTPResult(String imageIndex) {
-        Log.d(TAG, "getImage: getting " + imageIndex);
-        String imageUrl = GET_TPResult_URL + imageIndex;
-        Request.Builder builder = new Request.Builder();
-        Request request = builder.url(imageUrl).get().build();
-        try {
-            Response response = MainActivity.okHttpClientWithCookie.newCall(request).execute();
-            InputStream inputStream = response.body().byteStream();
-            Bitmap bitmap = BitmapFactory.decodeStream(inputStream);
-            Log.d(TAG, "getImage: getting " + imageIndex + " done");
-            return bitmap;
-        } catch (IOException e) {
-            Log.d(TAG, "getImage: error in getImage");
-            e.printStackTrace();
-            Log.d(TAG, "getImage: error end");
-            return null;
-        }
-
-    }
     private Bitmap getImage(String imageIndex) {
         Log.d(TAG, "getImage: getting " + imageIndex);
         String imageUrl = GET_IMAGE_URL + imageIndex;
@@ -305,38 +241,9 @@ public class MainFragment extends Fragment {
         }
     }
 
-    public static String saveImage(Bitmap bmp) {
-        File appDir = new File(Environment.getExternalStorageDirectory(), "TPResult");
-        if (!appDir.exists()) {
-            appDir.mkdir();
-        }
-        String fileName = System.currentTimeMillis() + ".jpg";
-        File file = new File(appDir, fileName);
-        try {
-            FileOutputStream fos = new FileOutputStream(file);
-            bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-            fos.flush();
-            fos.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return Environment.getExternalStorageDirectory()+"/TPResult/"+fileName;
-    }
-
     public void loadPictureFromServer() {
         new GetAllSplitImagesTask().execute();
+        hint.setText("Loading...");
     }
 
-
-    public void loadTPResultFromServer(){
-        new GetTPResultTask().execute();
-    }
-
-
-    public void testFunction() {
-//        Toast.makeText(getActivity(), "on upload photTo result", Toast.LENGTH_SHORT).show();
-        Log.d(TAG, "testFunction: gggggggggggggggggggggggggggggggggggggggggggg");
-    }
 }
